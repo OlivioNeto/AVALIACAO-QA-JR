@@ -1,0 +1,39 @@
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.exe
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.deps.json
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.runtimeconfig.json
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.dll
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.pdb
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.AssemblyInfoInputs.cache
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.AssemblyInfo.cs
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.csproj.CoreCompileInputs.cache
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.dll
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\refint\PROJETO QA.dll
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.pdb
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.genruntimeconfig.cache
+C:\Users\heric\source\repos\PROJETO QA\PROJETO QA\obj\Debug\net6.0-windows\ref\PROJETO QA.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.exe
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.deps.json
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.runtimeconfig.json
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\PROJETO QA.pdb
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO_QA.Form1.resources
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.csproj.GenerateResource.cache
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.AssemblyInfoInputs.cache
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.AssemblyInfo.cs
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.csproj.CoreCompileInputs.cache
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.sourcelink.json
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\refint\PROJETO QA.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.pdb
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.genruntimeconfig.cache
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\ref\PROJETO QA.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\System.Data.SqlClient.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\runtimes\win-arm64\native\sni.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\runtimes\win-x64\native\sni.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\runtimes\win-x86\native\sni.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\runtimes\unix\lib\net6.0\System.Data.SqlClient.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Data.SqlClient.dll
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.csproj.AssemblyReference.cache
+C:\Users\heric\OneDrive\Área de Trabalho\AVALIA-O-QA-JR\PROJETO QA\obj\Debug\net6.0-windows\PROJETO QA.csproj.Up2Date

@@ -1,0 +1,13 @@
+﻿CREATE DATABASE CoinGeckoDb;
+GO
+
+USE CoinGeckoDb;
+GO
+
+CREATE TABLE Cotacoes (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    DataHora DATETIME NOT NULL DEFAULT GETDATE(),
+    Preco DECIMAL(18,2) NOT NULL,
+    Variacao DECIMAL(8,4) NULL
+);
+GO

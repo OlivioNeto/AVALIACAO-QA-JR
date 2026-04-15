@@ -15,6 +15,10 @@ namespace PROJETO_QA
         private void btnConsulta_Click(object sender, EventArgs e)
         {
             lbPreco.Text = "Pesquisando";
+
+            double preco = 350000.75;
+
+            lbPreco.Text = preco.ToString("C");
         }
     }
 }

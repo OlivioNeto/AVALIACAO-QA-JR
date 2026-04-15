@@ -11,11 +11,13 @@ namespace PROJETO_QA
             InitializeComponent();
         }
 
+        private string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
+
         private void label1_Click(object sender, EventArgs e)
         {
 
         }
-
+        
         private async void btnConsulta_Click(object sender, EventArgs e)
         {
             try
@@ -31,11 +33,15 @@ namespace PROJETO_QA
             }
                 
         }
-
+        
         private async Task<double> ObterPrecoBitcoin() // async pois o método usa await, algo de de fora e Task double para devolver double
         {
             HttpClient clientHttp = new HttpClient(); // variavel para requisição
-            
+
+            clientHttp.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "AvaliacaoQA/1.0 (Windows Forms; contato: netoolivio34@gmail.com)"
+            ); // essa parte mostra para a api que eu sou um usuário e caso eu abuse ela tem um contato para chegar até mim
+
             var respostaHttp = await clientHttp.GetAsync("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl"); // pegando uma resposta da API
            
             string guardandoJson = await respostaHttp.Content.ReadAsStringAsync(); // pegando um json e fazendo ele ser lido como string

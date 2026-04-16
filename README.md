@@ -1,2 +1,6 @@
 # AVALIA-O-QA-JR
 Repositório criado afim de entregar todo o material solicitado para a vaga de QA-JR
+
+Explicações pedidas: sobre os tópicos 2 e 5.2 não foi usado nenhum tipo de IA, nem para corrigir os textos, nem para pesquisas e respostas. Tudo o que foi escrito nas pesguntas dejesadas foi através de pesquisa principalmente com vídeos no Youtube.
+
+Para o exercício 4 foi usado apenas o chatGPT, ele me acompanhou em todo o processo, fui bem específico no prompt pedindo para ele apenas me auxiliar, tentar me dar o caminho mas não as respostas, vou deixar os dois chats que usei para desenvolver o trabalho. Lá mostram históricos das minhas tentativas e conversas com ele sobre o que fazer e o roteiro que seguiriamos, ele foi o meu tutor nesse projeto, vão ter partes em que ele sim fez uma parte da lógica ou alterações, mas como no chat mesmo mostra eu pedi explicações pra ele sobre o que significava cada linha e anotei nos comentários de alguns códigos. Deixei de fazer a parte de cotações mostrar no DataGridView pois se continuasse ai o código seria mais de IA do que meu, fui até onde consegui e mais um pouco. Segue o link do chat principal: https://chatgpt.com/share/69df82a2-68e0-83e9-913c-eee6b3455455 

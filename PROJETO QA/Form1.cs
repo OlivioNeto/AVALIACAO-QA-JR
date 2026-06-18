@@ -28,20 +28,29 @@ namespace PROJETO_QA
         {
             try
             {
-                lbPreco.Text = "Pesquisando";
-                lbPreco.ForeColor = Color.Black;
+                btnConsulta.Enabled = false; // impede novos cliques durante a consulta
+                btnConsulta.Text = "Atualizando..."; // muda o texto, dando feedback
+
+                lbPreco.Text = "Pesquisando"; // texto da label
+                lbPreco.ForeColor = Color.Black; // muda a cor do texto
 
                 double preco = await ObterPrecoBitcoin();
 
                 double? variacao = SalvarCotacao(preco);
                                 
-                AtualizarIndicacaoVisual(preco, variacao);  
+                AtualizarIndicacaoVisual(preco, variacao);
                 
                 ExibirHistorico();
             }
             catch (Exception ex)
             {
-                lbPreco.Text = ex.Message;
+                lbPreco.ForeColor = Color.Red; // mudando a cor em caso de alguma exceção
+                lbPreco.Text = ex.Message; // exibindo a mensagem
+            }
+            finally
+            {
+                btnConsulta.Enabled = true; // deixo que o usuário clique novamente
+                btnConsulta.Text = "Atualizar"; // muda o texto, dando feedback
             }
 
         }

@@ -50,7 +50,7 @@
             btnConsulta.Name = "btnConsulta";
             btnConsulta.Size = new Size(167, 46);
             btnConsulta.TabIndex = 1;
-            btnConsulta.Text = "Pesquisar a Cotação";
+            btnConsulta.Text = "Atualizar";
             btnConsulta.UseVisualStyleBackColor = true;
             btnConsulta.Click += btnConsulta_Click;
             // 

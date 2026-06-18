@@ -115,25 +115,56 @@ namespace PROJETO_QA
         {
             using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
             {
+                double? ultimoPreco = ObterUltimoPreco(); // obtém a última cotação registrada no banco de dados
+
+                double? variacao = null; // inicializará a variável que armazenará a variação entre as cotações
+
+                if (ultimoPreco.HasValue) // verifica se existe uma cotação anterior registrada
+                {
+                    variacao = valor - ultimoPreco.Value; // calcula a diferença entre o preço atual e a última cotação registrada
+                }
+
                 conexao.Open(); // abrindo a conexão
-                string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, NULL)"; // o que eu quero do banco naquele momento
+                
+                string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)"; // o que eu quero do banco naquele momento
 
                 using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
                 {
                     comando.Parameters.AddWithValue("@preco", valor); // usado o valor preço como parâmetro por segurança 
+
+                    comando.Parameters.AddWithValue("@variacao", variacao.HasValue ? variacao.Value : DBNull.Value);
+
                     comando.ExecuteNonQuery(); // executa o comando no banco, não retorna dados
                 }
             }
         }
 
-        private void dgvHistorico_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private double? ObterUltimoPreco() // consulta o banco de dados e retorna a última cotação registrada
         {
+            using (SqlConnection conexao = new SqlConnection(connectionString))
+            {
+                conexao.Open();
 
+                string sql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
+
+                using (SqlCommand comando = new SqlCommand(sql, conexao))
+                {
+
+                    object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
+
+                    if (resultado == null || resultado == DBNull.Value) // retorna nulo caso não exista nenhuma cotação cadastrada
+                    {
+                        return null;
+                    }
+
+                    return Convert.ToDouble(resultado); // converte o resultado para double e retorna a última cotação encontrada
+                }
+            }            
         }
-
+        
         private void ExbirHistorico()
         {
-            using (SqlConnection conexao = new SqlConnection(connectionString)) // // criando conexão com o banco
+            using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
             {
                 conexao.Open(); // abrindo a conexão
                 string sql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC"; // o que eu quero do banco naquele momento
@@ -146,6 +177,11 @@ namespace PROJETO_QA
                     dgvHistorico.DataSource = tabela; // onde eu ligo a tabela com o DGV
                 }
             }     
+        }
+
+        private void dgvHistorico_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

@@ -29,10 +29,14 @@ namespace PROJETO_QA
             try
             {
                 lbPreco.Text = "Pesquisando";
+                lbPreco.ForeColor = Color.Black;
 
                 double preco = await ObterPrecoBitcoin();
-                lbPreco.Text = preco.ToString("C");
-                SalvarCotacao(preco);
+
+                double? variacao = SalvarCotacao(preco);
+                                
+                AtualizarIndicacaoVisual(preco, variacao);  
+                
                 ExibirHistorico();
             }
             catch (Exception ex)
@@ -40,6 +44,33 @@ namespace PROJETO_QA
                 lbPreco.Text = ex.Message;
             }
 
+        }
+
+        private void AtualizarIndicacaoVisual(double preco, double? variacao)
+        {
+            if (!variacao.HasValue) 
+            {
+                lbPreco.Text = $"{preco:C2}\nSem cotação anterior para comparação.";
+                lbPreco.ForeColor = Color.Black;
+            }
+
+            else if (variacao > 0)
+            {
+                lbPreco.Text = $"{preco:C2}\nAlta de {variacao.Value:C2}";
+                lbPreco.ForeColor = Color.Green;
+            }
+
+            else if (variacao < 0 )
+            {
+                lbPreco.Text = $"{preco:C2}\nQueda de {Math.Abs(variacao.Value):C2}";
+                lbPreco.ForeColor = Color.Red;
+            }
+
+            else
+            {
+                lbPreco.Text = $"{preco:C2}\nEstável";
+                lbPreco.ForeColor = Color.Blue;
+            }
         }
 
         private async Task<double> ObterPrecoBitcoin() // async pois o método usa await, algo de de fora e Task double para devolver double
@@ -111,7 +142,7 @@ namespace PROJETO_QA
             public double brl { get; set; }
         }
 
-        private void SalvarCotacao(double valor)
+        private double? SalvarCotacao(double valor)
         {
             using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
             {
@@ -135,6 +166,8 @@ namespace PROJETO_QA
                     comando.Parameters.AddWithValue("@variacao", variacao.HasValue ? variacao.Value : DBNull.Value);
 
                     comando.ExecuteNonQuery(); // executa o comando no banco, não retorna dados
+
+                    return variacao;
                 }
             }
         }
@@ -147,7 +180,7 @@ namespace PROJETO_QA
 
                 string sql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
 
-                using (SqlCommand comando = new SqlCommand(sql, conexao))
+                using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
                 {
 
                     object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
@@ -183,11 +216,11 @@ namespace PROJETO_QA
 
         private void ConfigurarGridHistorico()
         {
-            dgvHistorico.ReadOnly = true;
-            dgvHistorico.AllowUserToAddRows = false;
-            dgvHistorico.AllowUserToDeleteRows = false;
-            dgvHistorico.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvHistorico.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvHistorico.ReadOnly = true; // impede que o usuário edite os dados exibidos no DGV
+            dgvHistorico.AllowUserToAddRows = false; // impede que o usuário adicione novas linhas manualmente
+            dgvHistorico.AllowUserToDeleteRows = false; // impede que o usuário exclua linhas do DGV
+            dgvHistorico.SelectionMode = DataGridViewSelectionMode.FullRowSelect; // faz com que a seleção destaque a linha inteira em vez de apenas uma célula
+            dgvHistorico.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // ajusta automaticamente a largura das colunas para preencher todo o DGV
 
             if (dgvHistorico.Columns.Contains("DataHora"))
             {
@@ -197,24 +230,24 @@ namespace PROJETO_QA
 
             if (dgvHistorico.Columns.Contains("Preco"))
             {
-                dgvHistorico.Columns["Preco"].HeaderText = "Preço";
-                dgvHistorico.Columns["Preco"].DefaultCellStyle.Format = "C2";
+                dgvHistorico.Columns["Preco"].HeaderText = "Preço"; // nome do cabeçalho do DGV
+                dgvHistorico.Columns["Preco"].DefaultCellStyle.Format = "C2"; // formatando para a moeda brasileira
             }
 
             if (dgvHistorico.Columns.Contains("Variacao"))
             {
-                dgvHistorico.Columns["Variacao"].HeaderText = "Variação";
-                dgvHistorico.Columns["Variacao"].DefaultCellStyle.Format = "C2";
+                dgvHistorico.Columns["Variacao"].HeaderText = "Variação"; // nome do cabeçalho do DGV
+                dgvHistorico.Columns["Variacao"].DefaultCellStyle.Format = "C2"; // formatando para a moeda brasileira
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e) // evento executado automaticamente quando o formulário é carregado
         {
-            try
+            try // carrega e exibi o histórico de cotações ao iniciar o formulário
             {
                 ExibirHistorico();
             }
-            catch (Exception ex)
+            catch (Exception ex) // captura possíveis erros ocorridos durante o carregamento do histórico
             {
                 lbPreco.Text = "Não foi possível carregar o histórico: " + ex.Message;
             }

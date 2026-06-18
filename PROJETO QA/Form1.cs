@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.Json;
@@ -12,27 +11,23 @@ namespace PROJETO_QA
             InitializeComponent();
         }
 
-        private string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
+        private readonly string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
+        private const string CoinGeckoUrl = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl";
 
-        private static readonly HttpClient httpClient = new HttpClient() // instância única do HttpClient reutilizada em toda a aplicação, com timeout de 10 segundos.
+        private static readonly HttpClient httpClient = new HttpClient()
         {
             Timeout = TimeSpan.FromSeconds(10),
         };
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private async void btnConsulta_Click(object sender, EventArgs e)
         {
             try
             {
                 btnConsulta.Enabled = false; // impede novos cliques durante a consulta
-                btnConsulta.Text = "Atualizando..."; // muda o texto, dando feedback
+                btnConsulta.Text = "Atualizando...";
 
-                lbPreco.Text = "Pesquisando"; // texto da label
-                lbPreco.ForeColor = Color.Black; // muda a cor do texto
+                lbPreco.Text = "Pesquisando";
+                lbPreco.ForeColor = Color.Black;
 
                 double preco = await ObterPrecoBitcoin();
 
@@ -44,13 +39,13 @@ namespace PROJETO_QA
             }
             catch (Exception ex)
             {
-                lbPreco.ForeColor = Color.Red; // mudando a cor em caso de alguma exceção
-                lbPreco.Text = ex.Message; // exibindo a mensagem
+                lbPreco.ForeColor = Color.Red;
+                lbPreco.Text = ex.Message;
             }
             finally
             {
                 btnConsulta.Enabled = true; // deixo que o usuário clique novamente
-                btnConsulta.Text = "Atualizar"; // muda o texto, dando feedback
+                btnConsulta.Text = "Atualizar";
             }
 
         }
@@ -84,7 +79,7 @@ namespace PROJETO_QA
 
         private async Task<double> ObterPrecoBitcoin() // async pois o método usa await, algo de de fora e Task double para devolver double
         {
-            try // se tudo correr bem
+            try
             {
 
                 if (!httpClient.DefaultRequestHeaders.UserAgent.Any()) // faz uma verificação se existe ou não um user agent cadastrado, caso não exista cai dentro do if
@@ -94,9 +89,7 @@ namespace PROJETO_QA
                     ); // essa parte mostra para a api que eu sou um usuário e caso eu abuse ela tem um contato para chegar até mim
                 }
 
-                var respostaHttp = await httpClient.GetAsync(
-                    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl"
-                ); // pegando uma resposta da API
+                var respostaHttp = await httpClient.GetAsync(CoinGeckoUrl); // pegando uma resposta da API
 
                 if (!respostaHttp.IsSuccessStatusCode)
                 {
@@ -105,48 +98,48 @@ namespace PROJETO_QA
                     );
                 }
 
-                string guardandoJson = await respostaHttp.Content.ReadAsStringAsync(); // pegando um json e fazendo ele ser lido como string
+                string json = await respostaHttp.Content.ReadAsStringAsync();
 
-                if (string.IsNullOrWhiteSpace(guardandoJson)) // se for nulo ou vier em branco
+                if (string.IsNullOrWhiteSpace(json)) // se for nulo ou vier em branco
                 {
                     throw new Exception("A API retornou uma resposta vazia.");
                 }
 
-                var objDesserializado = JsonSerializer.Deserialize<RespostaBitcoin>(guardandoJson); // tranformando o json em algpo que o C# entenda
+                var respostaBitcoin = JsonSerializer.Deserialize<RespostaBitcoin>(json); // tranformando o json em algo que o C# entenda
                 
-                if (objDesserializado == null)
+                if (respostaBitcoin == null)
                 {
                     throw new Exception("A API retornou uma resposta em formato inválido.");
                 }
 
-                if (objDesserializado.bitcoin == null)
+                if (respostaBitcoin.bitcoin == null)
                 {
                     throw new Exception("A resposta da API não contém a cotação do Bitcoin.");
                 }
                 
-                return objDesserializado.bitcoin.brl; // retornando o objeto com a moeda bitcoin e o brl que é a moeda brasileira
+                return respostaBitcoin.bitcoin.brl;
             }
 
-            catch (HttpRequestException) // caso aconteceça alguma exeção, falha de internet, api fora.....
+            catch (HttpRequestException) 
             {
                 throw new Exception("Falha na comunicação com a API. Verifique sua conexão com a internet ou tente novamente mais tarde.");
             }
-            catch (TaskCanceledException) // caso demore para responder, deu time out
+            catch (TaskCanceledException)
             {
                 throw new Exception("A API demorou mais do que o esperado para responder. Aguarde alguns instantes e tente novamente.");
             }
-            catch (JsonException) // caso o JSON venha mal formatado
+            catch (JsonException)
             {
                 throw new Exception("A API retornou um JSON inválido.");
             }
         }
 
-        class RespostaBitcoin // é um objeto com a prioridade bitcoin
+        class RespostaBitcoin
         {
             public Moeda? bitcoin { get; set; } // está dizendo que a moeda pode vir nula e tenho que validar isso antes, o que acontece no método ObterPrecoBitcoin
         }
 
-        class Moeda // é o que possui dentro do bitcoin
+        class Moeda
         {
             public double brl { get; set; }
         }
@@ -155,28 +148,28 @@ namespace PROJETO_QA
         {
             try
             {
-                using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
+                using (SqlConnection conexao = new SqlConnection(connectionString)) 
                 {
                     double? ultimoPreco = ObterUltimoPreco(); // obtém a última cotação registrada no banco de dados
 
-                    double? variacao = null; // inicializará a variável que armazenará a variação entre as cotações
+                    double? variacao = null;
 
                     if (ultimoPreco.HasValue) // verifica se existe uma cotação anterior registrada
                     {
-                        variacao = valor - ultimoPreco.Value; // calcula a diferença entre o preço atual e a última cotação registrada
+                        variacao = valor - ultimoPreco.Value;
                     }
 
-                    conexao.Open(); // abrindo a conexão
+                    conexao.Open();
 
-                    string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)"; // o que eu quero do banco naquele momento
+                    string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)";
 
-                    using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
+                    using (SqlCommand comando = new SqlCommand(sql, conexao)) 
                     {
                         comando.Parameters.AddWithValue("@preco", valor); // usado o valor preço como parâmetro por segurança 
 
                         comando.Parameters.AddWithValue("@variacao", variacao.HasValue ? variacao.Value : DBNull.Value);
 
-                        comando.ExecuteNonQuery(); // executa o comando no banco, não retorna dados
+                        comando.ExecuteNonQuery();
 
                         return variacao;
                     }
@@ -184,11 +177,11 @@ namespace PROJETO_QA
             } 
             catch (SqlException)
             {
-                throw new Exception("Não foi possível salvar a cotação no banco de dados. Verifique se o LocalDB, o banco CoinGeckoDb e a tabela Cotacoes estão configurados corretamente");
+                throw new Exception("Não foi possível salvar a cotação no banco de dados. Verifique se o LocalDB, o banco CoinGeckoDb e a tabela Cotacoes estão configurados corretamente.");
             }
         }
 
-        private double? ObterUltimoPreco() // consulta o banco de dados e retorna a última cotação registrada
+        private double? ObterUltimoPreco()
         {
             try
             {
@@ -198,17 +191,17 @@ namespace PROJETO_QA
 
                     string sql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
 
-                    using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
+                    using (SqlCommand comando = new SqlCommand(sql, conexao))
                     {
 
                         object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
 
-                        if (resultado == null || resultado == DBNull.Value) // retorna nulo caso não exista nenhuma cotação cadastrada
+                        if (resultado == null || resultado == DBNull.Value)
                         {
                             return null;
                         }
 
-                        return Convert.ToDouble(resultado); // converte o resultado para double e retorna a última cotação encontrada
+                        return Convert.ToDouble(resultado);
                     }
                 }
             } 
@@ -223,15 +216,15 @@ namespace PROJETO_QA
         {
             try
             {
-                using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
+                using (SqlConnection conexao = new SqlConnection(connectionString))
                 {
-                    conexao.Open(); // abrindo a conexão
-                    string sql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC"; // o que eu quero do banco naquele momento
+                    conexao.Open();
+                    string sql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC";
 
-                    using (SqlDataAdapter adapta = new SqlDataAdapter(sql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
+                    using (SqlDataAdapter adaptador = new SqlDataAdapter(sql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
                     {
                         DataTable tabela = new DataTable(); // cria a memória da tabela
-                        adapta.Fill(tabela); // executa o select e preenche
+                        adaptador.Fill(tabela); // executa o select e preenche
 
                         dgvHistorico.DataSource = tabela; // onde eu ligo a tabela com o DGV
 
@@ -261,13 +254,13 @@ namespace PROJETO_QA
 
             if (dgvHistorico.Columns.Contains("Preco"))
             {
-                dgvHistorico.Columns["Preco"].HeaderText = "Preço"; // nome do cabeçalho do DGV
-                dgvHistorico.Columns["Preco"].DefaultCellStyle.Format = "C2"; // formatando para a moeda brasileira
+                dgvHistorico.Columns["Preco"].HeaderText = "Preço";
+                dgvHistorico.Columns["Preco"].DefaultCellStyle.Format = "C2";
             }
 
             if (dgvHistorico.Columns.Contains("Variacao"))
             {
-                dgvHistorico.Columns["Variacao"].HeaderText = "Variação"; // nome do cabeçalho do DGV
+                dgvHistorico.Columns["Variacao"].HeaderText = "Variação";
                 dgvHistorico.Columns["Variacao"].DefaultCellStyle.Format = "C2"; // formatando para a moeda brasileira
             }
         }
@@ -282,11 +275,6 @@ namespace PROJETO_QA
             {
                 lbPreco.Text = ex.Message;
             }
-        }
-
-        private void dgvHistorico_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
     }
 }

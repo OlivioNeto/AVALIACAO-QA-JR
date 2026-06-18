@@ -42,7 +42,6 @@
             lbPreco.Size = new Size(153, 20);
             lbPreco.TabIndex = 0;
             lbPreco.Text = "Qual a atual cotação?";
-            lbPreco.Click += label1_Click;
             // 
             // btnConsulta
             // 
@@ -63,7 +62,6 @@
             dgvHistorico.RowTemplate.Height = 29;
             dgvHistorico.Size = new Size(525, 272);
             dgvHistorico.TabIndex = 2;
-            dgvHistorico.CellContentClick += dgvHistorico_CellContentClick;
             // 
             // Form1
             // 

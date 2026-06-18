@@ -153,74 +153,96 @@ namespace PROJETO_QA
 
         private double? SalvarCotacao(double valor)
         {
-            using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
+            try
             {
-                double? ultimoPreco = ObterUltimoPreco(); // obtém a última cotação registrada no banco de dados
-
-                double? variacao = null; // inicializará a variável que armazenará a variação entre as cotações
-
-                if (ultimoPreco.HasValue) // verifica se existe uma cotação anterior registrada
+                using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
                 {
-                    variacao = valor - ultimoPreco.Value; // calcula a diferença entre o preço atual e a última cotação registrada
+                    double? ultimoPreco = ObterUltimoPreco(); // obtém a última cotação registrada no banco de dados
+
+                    double? variacao = null; // inicializará a variável que armazenará a variação entre as cotações
+
+                    if (ultimoPreco.HasValue) // verifica se existe uma cotação anterior registrada
+                    {
+                        variacao = valor - ultimoPreco.Value; // calcula a diferença entre o preço atual e a última cotação registrada
+                    }
+
+                    conexao.Open(); // abrindo a conexão
+
+                    string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)"; // o que eu quero do banco naquele momento
+
+                    using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
+                    {
+                        comando.Parameters.AddWithValue("@preco", valor); // usado o valor preço como parâmetro por segurança 
+
+                        comando.Parameters.AddWithValue("@variacao", variacao.HasValue ? variacao.Value : DBNull.Value);
+
+                        comando.ExecuteNonQuery(); // executa o comando no banco, não retorna dados
+
+                        return variacao;
+                    }
                 }
-
-                conexao.Open(); // abrindo a conexão
-                
-                string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)"; // o que eu quero do banco naquele momento
-
-                using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
-                {
-                    comando.Parameters.AddWithValue("@preco", valor); // usado o valor preço como parâmetro por segurança 
-
-                    comando.Parameters.AddWithValue("@variacao", variacao.HasValue ? variacao.Value : DBNull.Value);
-
-                    comando.ExecuteNonQuery(); // executa o comando no banco, não retorna dados
-
-                    return variacao;
-                }
+            } 
+            catch (SqlException)
+            {
+                throw new Exception("Não foi possível salvar a cotação no banco de dados. Verifique se o LocalDB, o banco CoinGeckoDb e a tabela Cotacoes estão configurados corretamente");
             }
         }
 
         private double? ObterUltimoPreco() // consulta o banco de dados e retorna a última cotação registrada
         {
-            using (SqlConnection conexao = new SqlConnection(connectionString))
+            try
             {
-                conexao.Open();
-
-                string sql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
-
-                using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
+                using (SqlConnection conexao = new SqlConnection(connectionString))
                 {
+                    conexao.Open();
 
-                    object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
+                    string sql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
 
-                    if (resultado == null || resultado == DBNull.Value) // retorna nulo caso não exista nenhuma cotação cadastrada
+                    using (SqlCommand comando = new SqlCommand(sql, conexao)) // cria um chamado sql que vai ser executado no banco
                     {
-                        return null;
-                    }
 
-                    return Convert.ToDouble(resultado); // converte o resultado para double e retorna a última cotação encontrada
+                        object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
+
+                        if (resultado == null || resultado == DBNull.Value) // retorna nulo caso não exista nenhuma cotação cadastrada
+                        {
+                            return null;
+                        }
+
+                        return Convert.ToDouble(resultado); // converte o resultado para double e retorna a última cotação encontrada
+                    }
                 }
-            }            
+            } 
+            catch (SqlException)
+            {
+                throw new Exception("Não foi possível consultar a última cotação no banco de dados.");
+            }
+            
         }
         
         private void ExibirHistorico()
         {
-            using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
+            try
             {
-                conexao.Open(); // abrindo a conexão
-                string sql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC"; // o que eu quero do banco naquele momento
-
-                using (SqlDataAdapter adapta = new SqlDataAdapter(sql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
+                using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
                 {
-                    DataTable tabela = new DataTable(); // cria a memória da tabela
-                    adapta.Fill(tabela); // executa o select e preenche
+                    conexao.Open(); // abrindo a conexão
+                    string sql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC"; // o que eu quero do banco naquele momento
 
-                    dgvHistorico.DataSource = tabela; // onde eu ligo a tabela com o DGV
+                    using (SqlDataAdapter adapta = new SqlDataAdapter(sql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
+                    {
+                        DataTable tabela = new DataTable(); // cria a memória da tabela
+                        adapta.Fill(tabela); // executa o select e preenche
 
-                    ConfigurarGridHistorico();
+                        dgvHistorico.DataSource = tabela; // onde eu ligo a tabela com o DGV
+
+                        ConfigurarGridHistorico();
+                    }
                 }
-            }     
+            }
+            catch (SqlException)
+            {
+                throw new Exception("Não foi possível carregar o histórico de cotações no banco de dados.");
+            }
         }
 
         private void ConfigurarGridHistorico()
@@ -258,7 +280,7 @@ namespace PROJETO_QA
             }
             catch (Exception ex) // captura possíveis erros ocorridos durante o carregamento do histórico
             {
-                lbPreco.Text = "Não foi possível carregar o histórico: " + ex.Message;
+                lbPreco.Text = ex.Message;
             }
         }
 

@@ -74,7 +74,8 @@
             Controls.Add(btnConsulta);
             Controls.Add(lbPreco);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Cotação Bitcoin";
+            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dgvHistorico).EndInit();
             ResumeLayout(false);
             PerformLayout();

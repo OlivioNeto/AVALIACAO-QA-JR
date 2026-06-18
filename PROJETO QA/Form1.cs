@@ -33,7 +33,7 @@ namespace PROJETO_QA
                 double preco = await ObterPrecoBitcoin();
                 lbPreco.Text = preco.ToString("C");
                 SalvarCotacao(preco);
-                ExbirHistorico();
+                ExibirHistorico();
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace PROJETO_QA
             }            
         }
         
-        private void ExbirHistorico()
+        private void ExibirHistorico()
         {
             using (SqlConnection conexao = new SqlConnection(connectionString)) // criando conexão com o banco
             {
@@ -175,8 +175,49 @@ namespace PROJETO_QA
                     adapta.Fill(tabela); // executa o select e preenche
 
                     dgvHistorico.DataSource = tabela; // onde eu ligo a tabela com o DGV
+
+                    ConfigurarGridHistorico();
                 }
             }     
+        }
+
+        private void ConfigurarGridHistorico()
+        {
+            dgvHistorico.ReadOnly = true;
+            dgvHistorico.AllowUserToAddRows = false;
+            dgvHistorico.AllowUserToDeleteRows = false;
+            dgvHistorico.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvHistorico.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            if (dgvHistorico.Columns.Contains("DataHora"))
+            {
+                dgvHistorico.Columns["DataHora"].HeaderText = "Data/Hora"; // nome do cabeçalho do DGV
+                dgvHistorico.Columns["DataHora"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm:ss"; // essa aparição vai ser de acordo com o formato colocado
+            }
+
+            if (dgvHistorico.Columns.Contains("Preco"))
+            {
+                dgvHistorico.Columns["Preco"].HeaderText = "Preço";
+                dgvHistorico.Columns["Preco"].DefaultCellStyle.Format = "C2";
+            }
+
+            if (dgvHistorico.Columns.Contains("Variacao"))
+            {
+                dgvHistorico.Columns["Variacao"].HeaderText = "Variação";
+                dgvHistorico.Columns["Variacao"].DefaultCellStyle.Format = "C2";
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                ExibirHistorico();
+            }
+            catch (Exception ex)
+            {
+                lbPreco.Text = "Não foi possível carregar o histórico: " + ex.Message;
+            }
         }
 
         private void dgvHistorico_CellContentClick(object sender, DataGridViewCellEventArgs e)

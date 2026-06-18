@@ -1,7 +1,6 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PROJETO_QA
@@ -14,6 +13,11 @@ namespace PROJETO_QA
         }
 
         private string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
+
+        private static readonly HttpClient httpClient = new HttpClient() // criando o campo estático para caso não tenha resposta da API, vai dar timeout
+        {
+            Timeout = TimeSpan.FromSeconds(10),
+        };
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -40,20 +44,42 @@ namespace PROJETO_QA
 
         private async Task<double> ObterPrecoBitcoin() // async pois o método usa await, algo de de fora e Task double para devolver double
         {
+            try // se tudo correr bem
+            {
 
-            HttpClient clientHttp = new HttpClient(); // variavel para requisição
+                if (!httpClient.DefaultRequestHeaders.UserAgent.Any()) // faz uma verificação se existe ou não um user agent cadastrado, caso não exista cai dentro do if
+                {
+                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
+                    "AvaliacaoQA/1.0 (Windows Forms; contato: netoolivio34@gmail.com)"
+                    ); // essa parte mostra para a api que eu sou um usuário e caso eu abuse ela tem um contato para chegar até mim
+                }
 
-            clientHttp.DefaultRequestHeaders.UserAgent.ParseAdd(
-                "AvaliacaoQA/1.0 (Windows Forms; contato: netoolivio34@gmail.com)"
-            ); // essa parte mostra para a api que eu sou um usuário e caso eu abuse ela tem um contato para chegar até mim
+                var respostaHttp = await httpClient.GetAsync(
+                    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl"
+                ); // pegando uma resposta da API
 
-            var respostaHttp = await clientHttp.GetAsync("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl"); // pegando uma resposta da API
+                if (!respostaHttp.IsSuccessStatusCode)
+                {
+                    throw new Exception(
+                    $"Erro ao consultar API. Código HTTP: {(int)respostaHttp.StatusCode} - {respostaHttp.StatusCode}"
+                    );
+                }
 
-            string guardandoJson = await respostaHttp.Content.ReadAsStringAsync(); // pegando um json e fazendo ele ser lido como string
+                string guardandoJson = await respostaHttp.Content.ReadAsStringAsync(); // pegando um json e fazendo ele ser lido como string
 
-            var objDesserializado = JsonSerializer.Deserialize<RespostaBitcoin>(guardandoJson); // tranformando o json em algpo que o C# entenda
+                var objDesserializado = JsonSerializer.Deserialize<RespostaBitcoin>(guardandoJson); // tranformando o json em algpo que o C# entenda
 
-            return objDesserializado.bitcoin.brl; // retornando o objeto com a moeda bitcoin e o brl que é a moeda brasileira
+                return objDesserializado.bitcoin.brl; // retornando o objeto com a moeda bitcoin e o brl que é a moeda brasileira
+            }
+
+            catch (HttpRequestException) // caso aconteceça alguma exeção, falha de internet, api fora.....
+            {
+                throw new Exception("Falha na comunicação com a API. Verifique sua conexão com a internet ou tente novamente mais tarde.");
+            }
+            catch (TaskCanceledException) // caso demrou para responder, deu time out
+            {
+                throw new Exception("A API demorou mais do que o esperado para responder. Aguarde alguns instantes e tente novamente.");
+            }
         }
 
         class RespostaBitcoin // é um objeto com a prioridade bitcoin

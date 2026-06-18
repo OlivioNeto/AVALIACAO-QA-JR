@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\heric\\OneDrive\\Área de Trabalho\\AVALIA-O-QA-JR\\PROJETO QA\\PROJETO QA.csproj": {}
+    "C:\\Users\\netoo\\OneDrive\\Área de Trabalho\\AVALIACAO-QA-JR\\PROJETO QA\\PROJETO QA.csproj": {}
   },
   "projects": {
-    "C:\\Users\\heric\\OneDrive\\Área de Trabalho\\AVALIA-O-QA-JR\\PROJETO QA\\PROJETO QA.csproj": {
+    "C:\\Users\\netoo\\OneDrive\\Área de Trabalho\\AVALIACAO-QA-JR\\PROJETO QA\\PROJETO QA.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\heric\\OneDrive\\Área de Trabalho\\AVALIA-O-QA-JR\\PROJETO QA\\PROJETO QA.csproj",
+        "projectUniqueName": "C:\\Users\\netoo\\OneDrive\\Área de Trabalho\\AVALIACAO-QA-JR\\PROJETO QA\\PROJETO QA.csproj",
         "projectName": "PROJETO QA",
-        "projectPath": "C:\\Users\\heric\\OneDrive\\Área de Trabalho\\AVALIA-O-QA-JR\\PROJETO QA\\PROJETO QA.csproj",
-        "packagesPath": "C:\\Users\\heric\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\heric\\OneDrive\\Área de Trabalho\\AVALIA-O-QA-JR\\PROJETO QA\\obj\\",
+        "projectPath": "C:\\Users\\netoo\\OneDrive\\Área de Trabalho\\AVALIACAO-QA-JR\\PROJETO QA\\PROJETO QA.csproj",
+        "packagesPath": "C:\\Users\\netoo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\netoo\\OneDrive\\Área de Trabalho\\AVALIACAO-QA-JR\\PROJETO QA\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\heric\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\netoo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -29,7 +29,8 @@
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0-windows7.0": {
+          "net6.0-windows": {
+            "framework": "net6.0-windows7.0",
             "targetAlias": "net6.0-windows",
             "projectReferences": {}
           }
@@ -44,10 +45,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
-        "net6.0-windows7.0": {
+        "net6.0-windows": {
+          "framework": "net6.0-windows7.0",
           "targetAlias": "net6.0-windows",
           "dependencies": {
             "System.Data.SqlClient": {
@@ -74,7 +76,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301\\RuntimeIdentifierGraph.json"
         }
       }
     }

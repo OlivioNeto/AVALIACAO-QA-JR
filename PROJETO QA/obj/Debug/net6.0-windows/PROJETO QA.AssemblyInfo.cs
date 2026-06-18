@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PROJETO QA")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94a66c9b81f53b14fb1295310dc90a639145da9e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15893323cfd0324ad4e5262cf65c1f5481ad79d8")]
 [assembly: System.Reflection.AssemblyProductAttribute("PROJETO QA")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PROJETO QA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

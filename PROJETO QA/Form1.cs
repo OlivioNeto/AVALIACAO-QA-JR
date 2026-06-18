@@ -14,7 +14,7 @@ namespace PROJETO_QA
 
         private string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
 
-        private static readonly HttpClient httpClient = new HttpClient() // criando o campo estático para caso não tenha resposta da API, vai dar timeout
+        private static readonly HttpClient httpClient = new HttpClient() // instância única do HttpClient reutilizada em toda a aplicação, com timeout de 10 segundos.
         {
             Timeout = TimeSpan.FromSeconds(10),
         };
@@ -67,8 +67,23 @@ namespace PROJETO_QA
 
                 string guardandoJson = await respostaHttp.Content.ReadAsStringAsync(); // pegando um json e fazendo ele ser lido como string
 
-                var objDesserializado = JsonSerializer.Deserialize<RespostaBitcoin>(guardandoJson); // tranformando o json em algpo que o C# entenda
+                if (string.IsNullOrWhiteSpace(guardandoJson)) // se for nulo ou vier em branco
+                {
+                    throw new Exception("A API retornou uma resposta vazia.");
+                }
 
+                var objDesserializado = JsonSerializer.Deserialize<RespostaBitcoin>(guardandoJson); // tranformando o json em algpo que o C# entenda
+                
+                if (objDesserializado == null)
+                {
+                    throw new Exception("A API retornou uma resposta em formato inválido.");
+                }
+
+                if (objDesserializado.bitcoin == null)
+                {
+                    throw new Exception("A resposta da API não contém a cotação do Bitcoin.");
+                }
+                
                 return objDesserializado.bitcoin.brl; // retornando o objeto com a moeda bitcoin e o brl que é a moeda brasileira
             }
 
@@ -76,15 +91,19 @@ namespace PROJETO_QA
             {
                 throw new Exception("Falha na comunicação com a API. Verifique sua conexão com a internet ou tente novamente mais tarde.");
             }
-            catch (TaskCanceledException) // caso demrou para responder, deu time out
+            catch (TaskCanceledException) // caso demore para responder, deu time out
             {
                 throw new Exception("A API demorou mais do que o esperado para responder. Aguarde alguns instantes e tente novamente.");
+            }
+            catch (JsonException) // caso o JSON venha mal formatado
+            {
+                throw new Exception("A API retornou um JSON inválido.");
             }
         }
 
         class RespostaBitcoin // é um objeto com a prioridade bitcoin
         {
-            public Moeda bitcoin { get; set; }
+            public Moeda? bitcoin { get; set; } // está dizendo que a moeda pode vir nula e tenho que validar isso antes, o que acontece no método ObterPrecoBitcoin
         }
 
         class Moeda // é o que possui dentro do bitcoin

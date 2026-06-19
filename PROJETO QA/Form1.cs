@@ -1,8 +1,7 @@
 using System.Data;
 using System.Data.SqlClient;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Configuration;
+using PROJETO_QA.Services;
 
 namespace PROJETO_QA
 {
@@ -13,23 +12,18 @@ namespace PROJETO_QA
             InitializeComponent();
 
             connectionString = ConfigurationManager.ConnectionStrings["CoinGeckoDb"]?.ConnectionString
-                ?? throw new InvalidOperationException("Connection string 'CoinGeckoDb' não foi encontrada no arquivo de configuração.");
+                ?? throw new InvalidOperationException("Connection string 'CoinGeckoDb' não foi encontrada no arquivo de configuração.");  
         }
 
-        private readonly string connectionString;
+        private readonly CoinGeckoService coinGeckoService = new CoinGeckoService();
 
-        private const string CoinGeckoUrl = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl";
+        private readonly string connectionString;
 
         private const string InserirCotacaoSql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)";
 
         private const string ObterUltimoPrecoSql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
 
         private const string ExibirHistoricoSql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC";
-
-        private static readonly HttpClient httpClient = new HttpClient()
-        {
-            Timeout = TimeSpan.FromSeconds(10),
-        };
 
         private async void btnConsulta_Click(object sender, EventArgs e)
         {
@@ -41,7 +35,7 @@ namespace PROJETO_QA
                 lbPreco.Text = "Pesquisando";
                 lbPreco.ForeColor = Color.Black;
 
-                double preco = await ObterPrecoBitcoin();
+                double preco = await coinGeckoService.ObterPrecoBitcoinAsync();
 
                 double? variacao = SalvarCotacao(preco);
                                 
@@ -87,74 +81,6 @@ namespace PROJETO_QA
                 lbPreco.Text = $"{preco:C2}\nEstável";
                 lbPreco.ForeColor = Color.Blue;
             }
-        }
-
-        private async Task<double> ObterPrecoBitcoin() // async pois o método usa await, algo de de fora e Task double para devolver double
-        {
-            try
-            {
-                if (!httpClient.DefaultRequestHeaders.UserAgent.Any()) // faz uma verificação se existe ou não um user agent cadastrado, caso não exista cai dentro do if
-                {
-                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
-                    "AvaliacaoQA/1.0 (Windows Forms; contato: netoolivio34@gmail.com)"
-                    ); // essa parte mostra para a api que eu sou um usuário e caso eu abuse ela tem um contato para chegar até mim
-                }
-
-                var respostaHttp = await httpClient.GetAsync(CoinGeckoUrl);
-
-                if (!respostaHttp.IsSuccessStatusCode)
-                {
-                    throw new Exception(
-                    $"Erro ao consultar API. Código HTTP: {(int)respostaHttp.StatusCode} - {respostaHttp.StatusCode}"
-                    );
-                }
-
-                string json = await respostaHttp.Content.ReadAsStringAsync();
-
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    throw new Exception("A API retornou uma resposta vazia.");
-                }
-
-                var respostaBitcoin = JsonSerializer.Deserialize<RespostaBitcoin>(json);
-                
-                if (respostaBitcoin == null)
-                {
-                    throw new Exception("A API retornou uma resposta em formato inválido.");
-                }
-
-                if (respostaBitcoin.Bitcoin == null)
-                {
-                    throw new Exception("A resposta da API não contém a cotação do Bitcoin.");
-                }
-                
-                return respostaBitcoin.Bitcoin.Brl;
-            }
-
-            catch (HttpRequestException) 
-            {
-                throw new Exception("Falha na comunicação com a API. Verifique sua conexão com a internet ou tente novamente mais tarde.");
-            }
-            catch (TaskCanceledException)
-            {
-                throw new Exception("A API demorou mais do que o esperado para responder. Aguarde alguns instantes e tente novamente.");
-            }
-            catch (JsonException)
-            {
-                throw new Exception("A API retornou um JSON inválido.");
-            }
-        }
-
-        class RespostaBitcoin
-        {
-            [JsonPropertyName("bitcoin")]
-            public Moeda? Bitcoin { get; set; } // está dizendo que a moeda pode vir nula e tenho que validar isso antes, o que acontece no método ObterPrecoBitcoin
-        }
-
-        class Moeda
-        {
-            [JsonPropertyName("brl")]
-            public double Brl { get; set; }
         }
 
         private double? SalvarCotacao(double valor)

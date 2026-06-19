@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PROJETO_QA
 {
@@ -12,7 +13,14 @@ namespace PROJETO_QA
         }
 
         private readonly string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
+
         private const string CoinGeckoUrl = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl";
+
+        private const string InserirCotacaoSql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)";
+
+        private const string ObterUltimoPrecoSql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
+
+        private const string ExibirHistoricoSql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC";
 
         private static readonly HttpClient httpClient = new HttpClient()
         {
@@ -23,7 +31,7 @@ namespace PROJETO_QA
         {
             try
             {
-                btnConsulta.Enabled = false; // impede novos cliques durante a consulta
+                btnConsulta.Enabled = false;
                 btnConsulta.Text = "Atualizando...";
 
                 lbPreco.Text = "Pesquisando";
@@ -44,7 +52,7 @@ namespace PROJETO_QA
             }
             finally
             {
-                btnConsulta.Enabled = true; // deixo que o usuário clique novamente
+                btnConsulta.Enabled = true;
                 btnConsulta.Text = "Atualizar";
             }
 
@@ -52,7 +60,7 @@ namespace PROJETO_QA
 
         private void AtualizarIndicacaoVisual(double preco, double? variacao)
         {
-            if (!variacao.HasValue) 
+            if (!variacao.HasValue)
             {
                 lbPreco.Text = $"{preco:C2}\nSem cotação anterior para comparação.";
                 lbPreco.ForeColor = Color.Black;
@@ -64,7 +72,7 @@ namespace PROJETO_QA
                 lbPreco.ForeColor = Color.Green;
             }
 
-            else if (variacao < 0 )
+            else if (variacao < 0)
             {
                 lbPreco.Text = $"{preco:C2}\nQueda de {Math.Abs(variacao.Value):C2}";
                 lbPreco.ForeColor = Color.Red;
@@ -81,7 +89,6 @@ namespace PROJETO_QA
         {
             try
             {
-
                 if (!httpClient.DefaultRequestHeaders.UserAgent.Any()) // faz uma verificação se existe ou não um user agent cadastrado, caso não exista cai dentro do if
                 {
                     httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
@@ -89,7 +96,7 @@ namespace PROJETO_QA
                     ); // essa parte mostra para a api que eu sou um usuário e caso eu abuse ela tem um contato para chegar até mim
                 }
 
-                var respostaHttp = await httpClient.GetAsync(CoinGeckoUrl); // pegando uma resposta da API
+                var respostaHttp = await httpClient.GetAsync(CoinGeckoUrl);
 
                 if (!respostaHttp.IsSuccessStatusCode)
                 {
@@ -100,24 +107,24 @@ namespace PROJETO_QA
 
                 string json = await respostaHttp.Content.ReadAsStringAsync();
 
-                if (string.IsNullOrWhiteSpace(json)) // se for nulo ou vier em branco
+                if (string.IsNullOrWhiteSpace(json))
                 {
                     throw new Exception("A API retornou uma resposta vazia.");
                 }
 
-                var respostaBitcoin = JsonSerializer.Deserialize<RespostaBitcoin>(json); // tranformando o json em algo que o C# entenda
+                var respostaBitcoin = JsonSerializer.Deserialize<RespostaBitcoin>(json);
                 
                 if (respostaBitcoin == null)
                 {
                     throw new Exception("A API retornou uma resposta em formato inválido.");
                 }
 
-                if (respostaBitcoin.bitcoin == null)
+                if (respostaBitcoin.Bitcoin == null)
                 {
                     throw new Exception("A resposta da API não contém a cotação do Bitcoin.");
                 }
                 
-                return respostaBitcoin.bitcoin.brl;
+                return respostaBitcoin.Bitcoin.Brl;
             }
 
             catch (HttpRequestException) 
@@ -136,12 +143,14 @@ namespace PROJETO_QA
 
         class RespostaBitcoin
         {
-            public Moeda? bitcoin { get; set; } // está dizendo que a moeda pode vir nula e tenho que validar isso antes, o que acontece no método ObterPrecoBitcoin
+            [JsonPropertyName("bitcoin")]
+            public Moeda? Bitcoin { get; set; } // está dizendo que a moeda pode vir nula e tenho que validar isso antes, o que acontece no método ObterPrecoBitcoin
         }
 
         class Moeda
         {
-            public double brl { get; set; }
+            [JsonPropertyName("brl")]
+            public double Brl { get; set; }
         }
 
         private double? SalvarCotacao(double valor)
@@ -150,24 +159,22 @@ namespace PROJETO_QA
             {
                 using (SqlConnection conexao = new SqlConnection(connectionString)) 
                 {
-                    double? ultimoPreco = ObterUltimoPreco(); // obtém a última cotação registrada no banco de dados
+                    double? ultimoPreco = ObterUltimoPreco();
 
                     double? variacao = null;
 
-                    if (ultimoPreco.HasValue) // verifica se existe uma cotação anterior registrada
+                    if (ultimoPreco.HasValue)
                     {
                         variacao = valor - ultimoPreco.Value;
                     }
 
                     conexao.Open();
 
-                    string sql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)";
-
-                    using (SqlCommand comando = new SqlCommand(sql, conexao)) 
+                    using (SqlCommand comando = new SqlCommand(InserirCotacaoSql, conexao)) 
                     {
-                        comando.Parameters.AddWithValue("@preco", valor); // usado o valor preço como parâmetro por segurança 
+                        comando.Parameters.Add("@preco", SqlDbType.Decimal).Value = valor;
 
-                        comando.Parameters.AddWithValue("@variacao", variacao.HasValue ? variacao.Value : DBNull.Value);
+                        comando.Parameters.Add("@variacao", SqlDbType.Decimal).Value = variacao.HasValue ? variacao.Value : DBNull.Value;
 
                         comando.ExecuteNonQuery();
 
@@ -189,11 +196,8 @@ namespace PROJETO_QA
                 {
                     conexao.Open();
 
-                    string sql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
-
-                    using (SqlCommand comando = new SqlCommand(sql, conexao))
+                    using (SqlCommand comando = new SqlCommand(ObterUltimoPrecoSql, conexao))
                     {
-
                         object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
 
                         if (resultado == null || resultado == DBNull.Value)
@@ -219,9 +223,8 @@ namespace PROJETO_QA
                 using (SqlConnection conexao = new SqlConnection(connectionString))
                 {
                     conexao.Open();
-                    string sql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC";
 
-                    using (SqlDataAdapter adaptador = new SqlDataAdapter(sql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
+                    using (SqlDataAdapter adaptador = new SqlDataAdapter(ExibirHistoricoSql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
                     {
                         DataTable tabela = new DataTable(); // cria a memória da tabela
                         adaptador.Fill(tabela); // executa o select e preenche

@@ -1,0 +1,25 @@
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\PROJETO QA.exe
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\PROJETO QA.deps.json
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\PROJETO QA.runtimeconfig.json
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\PROJETO QA.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\PROJETO QA.pdb
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\System.Data.SqlClient.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\runtimes\win-arm64\native\sni.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\runtimes\win-x64\native\sni.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\runtimes\win-x86\native\sni.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\runtimes\unix\lib\net6.0\System.Data.SqlClient.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\bin\Release\net6.0-windows\runtimes\win\lib\net6.0\System.Data.SqlClient.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.csproj.AssemblyReference.cache
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO_QA.Form1.resources
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.csproj.GenerateResource.cache
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.AssemblyInfoInputs.cache
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.AssemblyInfo.cs
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.csproj.CoreCompileInputs.cache
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.sourcelink.json
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.csproj.Up2Date
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\refint\PROJETO QA.dll
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.pdb
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\PROJETO QA.genruntimeconfig.cache
+C:\Users\netoo\OneDrive\Área de Trabalho\AVALIACAO-QA-JR\PROJETO QA\obj\Release\net6.0-windows\ref\PROJETO QA.dll

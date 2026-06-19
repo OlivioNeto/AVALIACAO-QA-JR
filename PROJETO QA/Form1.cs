@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Configuration;
 
 namespace PROJETO_QA
 {
@@ -10,9 +11,12 @@ namespace PROJETO_QA
         public Form1()
         {
             InitializeComponent();
+
+            connectionString = ConfigurationManager.ConnectionStrings["CoinGeckoDb"]?.ConnectionString
+                ?? throw new InvalidOperationException("Connection string 'CoinGeckoDb' não foi encontrada no arquivo de configuração.");
         }
 
-        private readonly string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CoinGeckoDb;Trusted_Connection=True;";
+        private readonly string connectionString;
 
         private const string CoinGeckoUrl = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl";
 

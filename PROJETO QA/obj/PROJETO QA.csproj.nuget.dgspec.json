@@ -52,6 +52,10 @@
           "framework": "net6.0-windows7.0",
           "targetAlias": "net6.0-windows",
           "dependencies": {
+            "System.Configuration.ConfigurationManager": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "System.Data.SqlClient": {
               "target": "Package",
               "version": "[4.9.1, )"

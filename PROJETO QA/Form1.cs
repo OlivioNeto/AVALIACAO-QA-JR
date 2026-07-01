@@ -1,7 +1,7 @@
-using System.Data;
-using System.Data.SqlClient;
-using System.Configuration;
+using PROJETO_QA.Repositories;
 using PROJETO_QA.Services;
+using System.Configuration;
+using System.Data;
 
 namespace PROJETO_QA
 {
@@ -13,17 +13,14 @@ namespace PROJETO_QA
 
             connectionString = ConfigurationManager.ConnectionStrings["CoinGeckoDb"]?.ConnectionString
                 ?? throw new InvalidOperationException("Connection string 'CoinGeckoDb' não foi encontrada no arquivo de configuração.");  
+            cotacaoRepository = new CotacaoRepository(connectionString);
         }
 
         private readonly CoinGeckoService coinGeckoService = new CoinGeckoService();
 
         private readonly string connectionString;
 
-        private const string InserirCotacaoSql = "INSERT INTO Cotacoes (Preco, Variacao) VALUES (@preco, @variacao)";
-
-        private const string ObterUltimoPrecoSql = "SELECT TOP 1 Preco FROM Cotacoes ORDER BY DataHora DESC"; // busca o preço da cotação mais recente registrada
-
-        private const string ExibirHistoricoSql = "SELECT DataHora, Preco, Variacao FROM Cotacoes ORDER BY DataHora DESC";
+        private readonly CotacaoRepository cotacaoRepository;
 
         private async void btnConsulta_Click(object sender, EventArgs e)
         {
@@ -37,10 +34,10 @@ namespace PROJETO_QA
 
                 double preco = await coinGeckoService.ObterPrecoBitcoinAsync();
 
-                double? variacao = SalvarCotacao(preco);
-                                
+                double? variacao = cotacaoRepository.SalvarCotacao(preco);
+
                 AtualizarIndicacaoVisual(preco, variacao);
-                
+
                 ExibirHistorico();
             }
             catch (Exception ex)
@@ -83,92 +80,12 @@ namespace PROJETO_QA
             }
         }
 
-        private double? SalvarCotacao(double valor)
-        {
-            try
-            {
-                using (SqlConnection conexao = new SqlConnection(connectionString)) 
-                {
-                    double? ultimoPreco = ObterUltimoPreco();
-
-                    double? variacao = null;
-
-                    if (ultimoPreco.HasValue)
-                    {
-                        variacao = valor - ultimoPreco.Value;
-                    }
-
-                    conexao.Open();
-
-                    using (SqlCommand comando = new SqlCommand(InserirCotacaoSql, conexao)) 
-                    {
-                        comando.Parameters.Add("@preco", SqlDbType.Decimal).Value = valor;
-
-                        comando.Parameters.Add("@variacao", SqlDbType.Decimal).Value = variacao.HasValue ? variacao.Value : DBNull.Value;
-
-                        comando.ExecuteNonQuery();
-
-                        return variacao;
-                    }
-                }
-            } 
-            catch (SqlException)
-            {
-                throw new Exception("Não foi possível salvar a cotação no banco de dados. Verifique se o LocalDB, o banco CoinGeckoDb e a tabela Cotacoes estão configurados corretamente.");
-            }
-        }
-
-        private double? ObterUltimoPreco()
-        {
-            try
-            {
-                using (SqlConnection conexao = new SqlConnection(connectionString))
-                {
-                    conexao.Open();
-
-                    using (SqlCommand comando = new SqlCommand(ObterUltimoPrecoSql, conexao))
-                    {
-                        object resultado = comando.ExecuteScalar(); // vai me retornar apenas um único valor e válido
-
-                        if (resultado == null || resultado == DBNull.Value)
-                        {
-                            return null;
-                        }
-
-                        return Convert.ToDouble(resultado);
-                    }
-                }
-            } 
-            catch (SqlException)
-            {
-                throw new Exception("Não foi possível consultar a última cotação no banco de dados.");
-            }
-            
-        }
-        
         private void ExibirHistorico()
         {
-            try
-            {
-                using (SqlConnection conexao = new SqlConnection(connectionString))
-                {
-                    conexao.Open();
+            DataTable tabela = cotacaoRepository.ObterHistorico();
 
-                    using (SqlDataAdapter adaptador = new SqlDataAdapter(ExibirHistoricoSql, conexao)) // e a ponte do banco e a tabela c#, busca dos dados e coloca dentro da DGV
-                    {
-                        DataTable tabela = new DataTable(); // cria a memória da tabela
-                        adaptador.Fill(tabela); // executa o select e preenche
-
-                        dgvHistorico.DataSource = tabela; // onde eu ligo a tabela com o DGV
-
-                        ConfigurarGridHistorico();
-                    }
-                }
-            }
-            catch (SqlException)
-            {
-                throw new Exception("Não foi possível carregar o histórico de cotações no banco de dados.");
-            }
+            dgvHistorico.DataSource = tabela;
+            ConfigurarGridHistorico();
         }
 
         private void ConfigurarGridHistorico()
